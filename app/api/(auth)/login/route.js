@@ -3,7 +3,7 @@ import { SignupSchema } from "@/app/lib/validators/auth.schema";
 import { SignJWT } from "jose";
 import { NextResponse } from "next/server";
 
-function getSecretKey() {
+function getJwtSecret() {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     throw new Error("JWT_SECRET is not defined in environment variables");
@@ -25,7 +25,7 @@ export async function POST(req) {
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("7d")
-      .sign(getSecretKey());
+      .sign(getJwtSecret());
 
     const res = NextResponse.json(
       {

@@ -2,7 +2,7 @@ import { prisma } from "@/app/lib/db/prisma";
 import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 
-const getJwtSecret = () => {
+export const getJwtSecret = () => {
   const secret = process.env.JWT_SECRET;
   if (!secret) throw new Error("JWT_SECRET_MISSING");
   return new TextEncoder().encode(secret);
