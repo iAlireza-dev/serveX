@@ -10,30 +10,27 @@ export default function OnboardingPage() {
     try {
       const res = await fetch("/api/onboarding", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || "Something went wrong");
+        toast.error(data.message || "Something went wrong");
         return;
       }
 
       toast.success("Role selected successfully");
 
-      const meRes = await fetch("/api/me");
-      const me = await meRes.json();
-
-      if (me.role === "CUSTOMER") {
-        router.push("/dashboard");
+      if (role === "CUSTOMER") {
+        router.push("/customer");
+        return;
       }
 
-      if (me.role === "SPECIALIST") {
-        router.push("/jobs");
+      if (role === "SPECIALIST") {
+        router.push("/specialist");
+        return;
       }
     } catch {
       toast.error("Network error");
@@ -53,7 +50,6 @@ export default function OnboardingPage() {
         </header>
 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Customer */}
           <div className="bg-white border border-[#E2E2E2] rounded-xl p-8 flex flex-col justify-between">
             <div>
               <h2 className="text-xl font-semibold text-[#1F1F1F] mb-4">
@@ -74,7 +70,6 @@ export default function OnboardingPage() {
             </button>
           </div>
 
-          {/* Specialist */}
           <div className="bg-white border border-[#E2E2E2] rounded-xl p-8 flex flex-col justify-between">
             <div>
               <h2 className="text-xl font-semibold text-[#1F1F1F] mb-4">

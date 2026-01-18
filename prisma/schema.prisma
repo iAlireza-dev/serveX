@@ -24,6 +24,9 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  customerRequests Request[] @relation("CustomerRequests")
+  assignedRequests Request[] @relation("AssignedRequests")
 }
 
 model UserProfile {
@@ -36,6 +39,28 @@ model UserProfile {
   avatarUrl String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum RequestStatus {
+  OPEN
+  ASSIGNED
+}
+
+model Request {
+  id           String        @id @default(uuid())
+  title        String
+  description  String
+  pricePerHour Int
+  status       RequestStatus @default(OPEN)
+
+  customerId String
+  customer   User   @relation("CustomerRequests", fields: [customerId], references: [id])
+
+  specialistId String?
+  specialist   User?   @relation("AssignedRequests", fields: [specialistId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
