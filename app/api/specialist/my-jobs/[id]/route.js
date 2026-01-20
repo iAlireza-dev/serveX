@@ -25,7 +25,7 @@ export async function GET(req, { params }) {
     );
   }
 
-  const { id: jobId } = params;
+  const { id: jobId } = await params;
   const specialistId = payload.sub;
 
   const job = await prisma.request.findFirst({

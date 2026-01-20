@@ -11,6 +11,7 @@ export default function MyJobDetailsPage() {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [finishing, setFinishing] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -54,10 +55,35 @@ export default function MyJobDetailsPage() {
 
       toast.success("Job completed");
       router.push("/specialist/my-jobs");
+      router.refresh?.();
     } catch (err) {
       toast.error(err.message || "Network error");
     } finally {
       setFinishing(false);
+    }
+  }
+
+  async function handleCancel() {
+    setCancelling(true);
+
+    try {
+      const res = await fetch(`/api/specialist/jobs/${id}/cancel`, {
+        method: "POST",
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Could not cancel job");
+      }
+
+      toast.success("Job cancelled");
+      router.push("/specialist");
+      router.refresh?.();
+    } catch (err) {
+      toast.error(err.message || "Network error");
+    } finally {
+      setCancelling(false);
     }
   }
 
@@ -95,20 +121,32 @@ export default function MyJobDetailsPage() {
             className={`text-xs px-3 py-1 rounded-full border ${
               job.status === "ASSIGNED"
                 ? "border-[#4D688C] text-[#4D688C]"
-                : "border-green-600 text-green-600"
+                : job.status === "COMPLETED"
+                  ? "border-green-600 text-green-600"
+                  : "border-neutral-400 text-neutral-400"
             }`}
           >
             {job.status}
           </span>
 
           {job.status === "ASSIGNED" && (
-            <button
-              onClick={handleFinish}
-              disabled={finishing}
-              className="rounded-lg bg-green-600 text-white px-6 py-3 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
-            >
-              {finishing ? "Finishing..." : "Finish this job"}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleCancel}
+                disabled={cancelling}
+                className="rounded-lg border border-red-600 text-red-600 px-5 py-2 text-sm font-medium hover:bg-red-50 transition disabled:opacity-50"
+              >
+                {cancelling ? "Cancelling..." : "Cancel job"}
+              </button>
+
+              <button
+                onClick={handleFinish}
+                disabled={finishing}
+                className="rounded-lg bg-green-600 text-white px-6 py-3 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
+              >
+                {finishing ? "Finishing..." : "Finish this job"}
+              </button>
+            </div>
           )}
         </div>
       </div>
