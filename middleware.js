@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
 
-const PUBLIC_PAGES = ["/login", "/signup"];
+const PUBLIC_PAGES = ["/login", "/signup", "/"];
 const ONBOARDING_PATH = "/onboarding";
 
 export async function middleware(req) {
@@ -34,7 +34,6 @@ export async function middleware(req) {
 
   const role = payload.role;
 
-  // 4️⃣ No role → onboarding only
   if (!role) {
     if (pathname.startsWith(ONBOARDING_PATH)) {
       return NextResponse.next();

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -15,39 +16,43 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    setLoading(false);
+      const data = await res.json().catch(() => null);
 
-    if (!res.ok) {
-      const data = await res.json();
-      toast.error(data.message || "Login failed");
-      return;
+      if (!res.ok) {
+        toast.error(data?.message || "Login failed");
+        return;
+      }
+
+      toast.success("Welcome back");
+
+      if (!data?.role) {
+        router.push("/onboarding");
+        return;
+      }
+
+      if (data.role === "CUSTOMER") {
+        router.push("/customer");
+        return;
+      }
+
+      if (data.role === "SPECIALIST") {
+        router.push("/specialist");
+        return;
+      }
+
+      router.push("/");
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setLoading(false);
     }
-
-    const data = await res.json();
-    toast.success("Welcome back");
-
-    if (!data.role) {
-      router.push("/onboarding");
-      return;
-    }
-
-    if (data.role === "CUSTOMER") {
-      router.push("/customer");
-      return;
-    }
-
-    if (data.role === "SPECIALIST") {
-      router.push("/specialist");
-      return;
-    }
-
-    router.push("/");
   }
 
   return (
@@ -56,14 +61,17 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="w-full max-w-md space-y-8 bg-white p-10 rounded-2xl border border-neutral-200"
       >
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold text-neutral-900">
-            Sign in to ServeX
-          </h1>
+        <header className="text-center space-y-2">
+          <Link
+            href="/"
+            className="inline-block text-3xl font-semibold text-[#4D688C] hover:opacity-80 transition"
+          >
+            ServeX
+          </Link>
           <p className="text-sm text-neutral-500">
-            Access your service dashboard
+            Sign in to access your dashboard
           </p>
-        </div>
+        </header>
 
         <div className="space-y-3">
           <label className="text-sm font-medium text-neutral-600">Email</label>
@@ -72,6 +80,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="email"
             className="w-full rounded-md border border-neutral-300 px-4 py-3 text-neutral-900 outline-none focus:border-[#59584A]"
           />
         </div>
@@ -85,6 +94,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete="current-password"
             className="w-full rounded-md border border-neutral-300 px-4 py-3 text-neutral-900 outline-none focus:border-[#59584A]"
           />
         </div>
@@ -96,6 +106,15 @@ export default function LoginPage() {
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
+        <p>
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/signUp"
+            className="text-[#4D688C] hover:underline"
+          >
+            Sign Up
+          </Link>
+        </p>
       </form>
     </div>
   );
