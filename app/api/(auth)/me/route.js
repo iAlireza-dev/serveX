@@ -1,12 +1,7 @@
 import { prisma } from "@/app/lib/db/prisma";
+import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
 import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
-
-export const getJwtSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) throw new Error("JWT_SECRET_MISSING");
-  return new TextEncoder().encode(secret);
-};
 
 export async function GET(req) {
   const token = req.cookies.get("session")?.value;

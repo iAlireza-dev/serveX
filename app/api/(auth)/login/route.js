@@ -2,14 +2,7 @@ import { loginUser } from "@/app/lib/auth/login.service";
 import { SignupSchema } from "@/app/lib/validators/auth.schema";
 import { SignJWT } from "jose";
 import { NextResponse } from "next/server";
-
-function getJwtSecret() {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error("JWT_SECRET is not defined in environment variables");
-  }
-  return new TextEncoder().encode(secret);
-}
+import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
 
 export async function POST(req) {
   try {

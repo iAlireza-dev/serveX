@@ -47,6 +47,8 @@ model UserProfile {
 enum RequestStatus {
   OPEN
   ASSIGNED
+  COMPLETED
+  CANCELLED
 }
 
 model Request {

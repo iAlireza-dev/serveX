@@ -1,9 +1,8 @@
 import { jwtVerify } from "jose";
-import { getJwtSecret } from "../../(auth)/me/route";
+import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
 import { createRequestSchema } from "@/app/lib/validators/requests.schema";
 import { createRequest } from "@/app/lib/requests/create-request.service";
 import { NextResponse } from "next/server";
-import { id } from "zod/locales";
 
 ////////////////////////////////////////////POST METHOD
 

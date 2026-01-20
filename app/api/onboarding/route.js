@@ -1,7 +1,7 @@
 import { jwtVerify, SignJWT } from "jose";
 import { prisma } from "@/app/lib/db/prisma";
 import { NextResponse } from "next/server";
-import { getJwtSecret } from "../(auth)/me/route";
+import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
 
 export async function POST(req) {
   const token = req.cookies.get("session")?.value;

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
-import { getJwtSecret } from "./app/api/(auth)/me/route";
+import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
 
 const PUBLIC_PAGES = ["/login", "/signup"];
 const ONBOARDING_PATH = "/onboarding";
