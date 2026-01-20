@@ -48,7 +48,8 @@ enum RequestStatus {
   OPEN
   ASSIGNED
   COMPLETED
-  CANCELLED
+  CANCELLED_BY_CUSTOMER
+  CANCELLED_BY_SPECIALIST
 }
 
 model Request {
