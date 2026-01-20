@@ -20,28 +20,11 @@ model User {
   role         Role?
   isActive     Boolean @default(true)
 
-  profile UserProfile?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   customerRequests Request[] @relation("CustomerRequests")
   assignedRequests Request[] @relation("AssignedRequests")
-}
-
-model UserProfile {
-  id     String @id @default(uuid())
-  userId String @unique
-
-  username  String? @unique
-  fullName  String?
-  phone     String?
-  avatarUrl String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 enum RequestStatus {
