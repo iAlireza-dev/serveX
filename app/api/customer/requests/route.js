@@ -3,6 +3,7 @@ import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
 import { createRequestSchema } from "@/app/lib/validators/requests.schema";
 import { createRequest } from "@/app/lib/requests/create-request.service";
 import { NextResponse } from "next/server";
+import { createRequestLimiter } from "@/app/lib/limiters/request.limiter";
 
 ////////////////////////////////////////////POST METHOD
 
@@ -14,7 +15,6 @@ export async function POST(req) {
   }
 
   let payload;
-
   try {
     const result = await jwtVerify(token, getJwtSecret());
     payload = result.payload;
@@ -27,6 +27,12 @@ export async function POST(req) {
       { message: "ONLY_CUSTOMERS_CAN_CREATE_REQUESTS" },
       { status: 403 },
     );
+  }
+
+  try {
+    await createRequestLimiter.consume(payload.sub);
+  } catch {
+    return NextResponse.json({ message: "TOO_MANY_REQUESTS" }, { status: 429 });
   }
 
   let data;
