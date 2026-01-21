@@ -3,8 +3,23 @@ import { SignupSchema } from "@/app/lib/validators/auth.schema";
 import { SignJWT } from "jose";
 import { NextResponse } from "next/server";
 import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
+import { loginLimiter } from "@/app/lib/rate-limit/auth.limiter";
 
 export async function POST(req) {
+  const ip =
+    req.headers.get("x-forwarded-for") ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
+
+  try {
+    await loginLimiter.consume(ip);
+  } catch {
+    return NextResponse.json(
+      { message: "TOO_MANY_LOGIN_ATTEMPTS" },
+      { status: 429 },
+    );
+  }
+
   try {
     const body = await req.json();
     const data = SignupSchema.parse(body);
