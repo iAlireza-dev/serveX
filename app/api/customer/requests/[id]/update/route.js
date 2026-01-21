@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { getJwtSecret } from "@/app/lib/jwt/getJwtSecret";
 import { updateRequestByCustomer } from "@/app/lib/requests/updateRequestByCustomer.service";
+import { updateRequestLimiter } from "@/app/lib/rate-limit/customer-request.limiter";
 
 export async function PATCH(req, { params }) {
   const token = req.cookies.get("session")?.value;
@@ -23,6 +24,12 @@ export async function PATCH(req, { params }) {
       { error: "ONLY_CUSTOMERS_CAN_EDIT_REQUESTS" },
       { status: 403 },
     );
+  }
+
+  try {
+    await updateRequestLimiter.consume(payload.sub);
+  } catch {
+    return NextResponse.json({ message: "TOO_MANY_REQUESTS" }, { status: 429 });
   }
 
   const { id: requestId } = await params;

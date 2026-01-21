@@ -7,3 +7,10 @@ export const createRequestLimiter = new RateLimiterRedis({
   points: 3, // 3 request
   duration: 60, // per minute
 });
+
+export const updateRequestLimiter = new RateLimiterRedis({
+  storeClient: redis,
+  keyPrefix: "request:update",
+  points: 10, // 10 requests
+  duration: 60, // per minute
+});
