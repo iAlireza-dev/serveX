@@ -47,6 +47,11 @@ export default function LoginPage() {
         return;
       }
 
+      if (data.role === "ADMIN") {
+        router.push("/admin");
+        return;
+      }
+
       router.push("/");
     } catch {
       toast.error("Network error");
@@ -108,10 +113,7 @@ export default function LoginPage() {
         </button>
         <p>
           Don&apos;t have an account?{" "}
-          <Link
-            href="/signUp"
-            className="text-[#4D688C] hover:underline"
-          >
+          <Link href="/signUp" className="text-[#4D688C] hover:underline">
             Sign Up
           </Link>
         </p>

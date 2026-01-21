@@ -54,6 +54,16 @@ export async function middleware(req) {
     }
   }
 
+  if (role === "ADMIN") {
+    if (!pathname.startsWith("/admin")) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+  }
+
+  if (role !== "ADMIN" && pathname.startsWith("/admin")) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   return NextResponse.next();
 }
 
